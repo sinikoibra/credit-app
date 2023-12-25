@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-import Obj_Func,{without_invest} from '../Folder/Functions';
+import Obj_Func,{without_invest,calculate_loan_amount} from '../Folder/Functions';
 
 
 export default function Info_List() {
   const [cost,updatecost] = useState(0);
   const [Loan_interest_rate,updateLoan_interest_rate] = useState(0);
-  const [min_tenure,updatemin_tenure] = useState(0);
+  //const [min_tenure,updatemin_tenure] = useState(0);
+  const min_tenure = 1
   const [max_tenure,updatemax_tenure] = useState(0);
   const [Investment_interest_rate,updateInvestment_interest_rate] = useState(0);
   const [savings,updatesavings] = useState(0);
@@ -21,7 +22,7 @@ export default function Info_List() {
 
   const [cost_output ,updatecost_output] = useState(0);
   const [Loan_interest_rate_output ,updateLoan_interest_rate_output] = useState(0);
-  const [min_tenure_output ,updatemin_tenure_output] = useState(0);
+  //const [min_tenure_output ,updatemin_tenure_output] = useState(0);
   const [max_tenure_output ,updatemax_tenure_output] = useState(0);
   const [Investment_rate_output ,updateInvestment_rate_output] = useState(0);
   const [savings_output ,updatesavings_output] = useState(0);
@@ -31,22 +32,61 @@ export default function Info_List() {
   const [final_cost_wout_inv ,updatefinal_cost_wout_inv] = useState(0);
   const [tenure_wout_inv ,updatetenure_wout_inv] = useState(0);
 
+  const [toggle_text ,updatetoggle_text] = useState(0);
+
+
+
   //var final_cost
  
 
   const submit=(e)=>{
     e.preventDefault()
+    var min_emi = (calculate_loan_amount(cost-savings,Loan_interest_rate,max_tenure))/(max_tenure*12)
+    var min_emi_str = parseFloat(min_emi.toFixed(2)).toLocaleString('en-IN', { style: 'decimal' })
+    console.log(min_downpayment)
+    if (!cost||!Loan_interest_rate||!min_tenure||!max_tenure||!Investment_interest_rate||!savings||isNaN(min_downpayment)||!emi_limit)
+    {
+      updatedisplay(false)
+      alert("Please fill all the fields")
+      
+    }
+    else if(min_emi>emi_limit){
+      updatedisplay(false)
+      alert("Minimum emi should be "+min_emi_str)
+
+    }
+
+    else if(savings<min_downpayment*0.01*cost){
+      updatedisplay(false)
+      alert("Savings is less than minimum required downpayment of "+min_downpayment+"% of cost")
+
+    }
+    else if(savings>cost){
+      updatedisplay(false)
+      alert("Savings needs to be less than the cost")
+
+    }
+    else{
     updatedisplay(true)
     //updateretcost(Obj_Func(cost,Loan_interest_rate,min_tenure,max_tenure,Investment_interest_rate,savings,min_downpayment,emi_limit))
     var output=Obj_Func(cost,Loan_interest_rate,min_tenure,max_tenure,Investment_interest_rate,savings,min_downpayment,emi_limit)
     
     //final_cost = output[0]
-    updatefinal_cost_wth_inv(parseFloat(output[0].toFixed(2)).toLocaleString('en-IN', { style: 'decimal' }))
+    if (output[0]==10**99){
+      updatefinal_cost_wth_inv('----')
+      updatetoggle_text(0)
+    }
+    else{
+      updatefinal_cost_wth_inv(parseFloat(output[0].toFixed(2)).toLocaleString('en-IN', { style: 'decimal' }))
+      updatetoggle_text(1)
+    }
+    
     updatetenure_wth_inv(output[1])
     updatedownpaypercent_wth_inv(output[2])
+    
     updatecost_output(output[3])
     updateLoan_interest_rate_output(output[4])
-    updatemin_tenure_output(output[5])
+    //updatemin_tenure_output(output[5])
     updatemax_tenure_output(output[6])
     updateInvestment_rate_output(output[7])
     updatesavings_output(output[8])
@@ -58,8 +98,10 @@ export default function Info_List() {
     updatefinal_cost_wout_inv(parseFloat(output_wout_inv[0].toFixed(2)).toLocaleString('en-IN', { style: 'decimal' }))
     updatetenure_wout_inv(output_wout_inv[1])
 
+
+
     console.log(output)
-    console.log(output_wout_inv)
+    console.log(output_wout_inv)}
   }
   //cost,Loan_interest_rate,min_tenure,max_tenure,Investment_interest_rate,savings,min_downpayment,emi_limit
 
@@ -96,15 +138,15 @@ export default function Info_List() {
 
     <div className="mb-2">
     <label htmlFor="input2" className="form-label">Loan interest rate</label>
-    <input type="number" className="form-control" id="exampleFormControlInput1"  //value={cost} 
+    <input type="number" step="0.01" className="form-control" id="exampleFormControlInput1"  //value={cost} 
     onChange={(e)=>updateLoan_interest_rate(parseInt(e.target.value))}/>
     </div>
 
-    <div className="mb-2">
+    {/* <div className="mb-2">
     <label htmlFor="input3" className="form-label">min tenure</label>
     <input type="number" className="form-control" id="exampleFormControlInput1"  //value={cost} 
     onChange={(e)=>updatemin_tenure(parseInt(e.target.value))}/>
-    </div>
+    </div> */}
 
     <div className="mb-2">
     <label htmlFor="input4" className="form-label">max tenure</label>
@@ -114,13 +156,13 @@ export default function Info_List() {
 
     <div className="mb-2">
     <label htmlFor="input5" className="form-label">Investment interest rate</label>
-    <input type="number" className="form-control" id="exampleFormControlInput1"  //value={cost} 
+    <input type="number" step="0.01" className="form-control" id="exampleFormControlInput1"  //value={cost} 
     onChange={(e)=>updateInvestment_interest_rate(parseInt(e.target.value))}/>
     </div>
 
     <div className="mb-2">
     <label htmlFor="input6" className="form-label">min downpayment</label>
-    <input type="number" className="form-control" id="exampleFormControlInput1"  //value={cost} 
+    <input type="number" step="0.01" className="form-control" id="exampleFormControlInput1"  //value={cost} 
     onChange={(e)=>updatemin_downpayment(parseInt(e.target.value))}/>
     </div>
 
@@ -144,26 +186,33 @@ export default function Info_List() {
     <h5 className="mt-3"> Final Cost With Investment </h5>
     <div className="mt-2 fs-3" >₹ {final_cost_wth_inv}</div>
     <button class="btn btn-info mt-2 mb-2" onClick={hide}>Click for details</button>
-    {toggle && <div id = "ext_info" style={{ border: '1px solid #000', padding: '10px', borderRadius: '5px' }}> 
-    <p>As per your input
-    The cost of the product is 200000.<br></br>
-    Savings kept for the product is 50000.<br></br>
-    As per bank requirement you need to make minimum downpayment of 10% that is 20000.
+    {toggle && (
+    <div id = "ext_info" style={{ border: '1px solid #000', padding: '10px', borderRadius: '5px' }}> 
+    {toggle_text ? (
+    <>
+    <p>As per the information provided by you<br></br>
+    The cost of the product is ₹{cost_output}.<br></br>
+    Savings kept for the product is ₹{savings_output}.<br></br>
+    As per your bank's requirement you need to make minimum downpayment of {min_downpayment_output}% that is ₹{min_downpayment_output*0.01*cost_output}.
     </p>
     <p>
-    what we are suggesting
-    Instead of giving entire savings as downpayment you deposit the min amount of 20000 and take credit for the rest 180000 with a tenure of 3years.
-    Now invest rest of the savings i.e. 30000. 
-    At 8% rate of return, in 3years it will become y amount.
+    What we are suggesting<br></br>
+    Instead of giving entire savings as downpayment you deposit an amount of ₹{Math.round(downpaypercent_wth_inv*0.01*savings_output)} and take credit for the rest ₹{Math.round(cost_output - (downpaypercent_wth_inv*0.01*savings_output))} with a tenure of {tenure_wth_inv} years at an EMI of ₹{Math.round(calculate_loan_amount(cost_output - (downpaypercent_wth_inv*0.01*savings_output),Loan_interest_rate_output,tenure_wth_inv)/(tenure_wth_inv*12))}.
+    Now invest rest of the savings i.e. ₹{Math.round(savings_output - (downpaypercent_wth_inv*0.01*savings_output))} at {Investment_rate_output}% rate of return, for {tenure_wth_inv} years.
     </p>
-
-    </div> }
+    </>):
+    (
+    <><p>With the savings level and EMI capacity we won't have any savings left to invest hence the without investment method is preferrable</p></>
+    )
+    }
+    </div>)} 
     
     
     <h5 className="mt-5"> Final Cost Without Investment </h5>
     <div className="mt-2 fs-3">₹ {final_cost_wout_inv}</div>
-    <button class="btn btn-info mt-2 mb-2" onClick={hide_wth_inv}>Explain</button>
-    {toggle_wot_inv&&<div> This space is for explanation of without investment</div>}
+    <button class="btn btn-info mt-2 mb-2" onClick={hide_wth_inv}>Click for details</button>
+    {toggle_wot_inv&&<div id = "ext_info" style={{ border: '1px solid #000', padding: '10px', borderRadius: '5px' }}> Use the entire savings of ₹{savings_output} as downpayment.
+    Take a loan of ₹{cost_output-savings_output} for {tenure_wout_inv}years at an EMI of ₹{Math.round(calculate_loan_amount(cost_output - savings_output,Loan_interest_rate_output,tenure_wout_inv)/(tenure_wout_inv*12))} </div>}
 
     </div>}
     </div>

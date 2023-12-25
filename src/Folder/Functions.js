@@ -2,7 +2,7 @@ function calculate_investment_return(lumpsum, investment_return_rate, investment
         const total_return=lumpsum*(1+(investment_return_rate/100))**investment_tenure
         return total_return
     }
-function calculate_loan_amount(principal, annual_interest_rate, loan_tenure_years){
+export function calculate_loan_amount(principal, annual_interest_rate, loan_tenure_years){
     //Convert annual interest rate to monthly interest rate
     const monthly_interest_rate = annual_interest_rate / 12 / 100
     const loan_tenure_months=loan_tenure_years*12
@@ -89,6 +89,7 @@ export function without_invest(cost,Loan_interest_rate,min_tenure,max_tenure,sav
     //return(totalcostarr)
     return([finalcost,tenure_yr])
 }
+
 
 /*X, Y = meshgrid(tenure_years, savings_percentage)
 
