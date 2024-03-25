@@ -4,11 +4,11 @@ import Obj_Func,{without_invest,calculate_loan_amount} from '../Folder/Functions
 
 export default function Info_List() {
   const [cost,updatecost] = useState(0);
-  const [Loan_interest_rate,updateLoan_interest_rate] = useState(0);
+  const [Loan_interest_rate,updateLoan_interest_rate] = useState(0.0);
   //const [min_tenure,updatemin_tenure] = useState(0);
   const min_tenure = 1
   const [max_tenure,updatemax_tenure] = useState(0);
-  const [Investment_interest_rate,updateInvestment_interest_rate] = useState(0);
+  const [Investment_interest_rate,updateInvestment_interest_rate] = useState(0.0);
   const [savings,updatesavings] = useState(0);
   const [min_downpayment,updatemin_downpayment] = useState(0);
   const [emi_limit,updateemi_limit] = useState(0);
@@ -83,7 +83,7 @@ export default function Info_List() {
     
     updatetenure_wth_inv(output[1])
     updatedownpaypercent_wth_inv(output[2])
-    
+
     updatecost_output(output[3])
     updateLoan_interest_rate_output(output[4])
     //updatemin_tenure_output(output[5])
@@ -139,7 +139,7 @@ export default function Info_List() {
     <div className="mb-2">
     <label htmlFor="input2" className="form-label">Loan interest rate</label>
     <input type="number" step="0.01" className="form-control" id="exampleFormControlInput1"  //value={cost} 
-    onChange={(e)=>updateLoan_interest_rate(parseInt(e.target.value))}/>
+    onChange={(e)=>updateLoan_interest_rate(parseFloat(e.target.value))}/>
     </div>
 
     {/* <div className="mb-2">
@@ -155,9 +155,13 @@ export default function Info_List() {
     </div>
 
     <div className="mb-2">
-    <label htmlFor="input5" className="form-label">Investment interest rate</label>
-    <input type="number" step="0.01" className="form-control" id="exampleFormControlInput1"  //value={cost} 
-    onChange={(e)=>updateInvestment_interest_rate(parseInt(e.target.value))}/>
+    <label htmlFor="dropdown" className="form-label">Investment interest rate</label>
+    <select class="form-select" aria-label="Default select example" onChange={(e)=>updateInvestment_interest_rate(parseFloat(e.target.value))}>
+    <option selected value = {0}>Select</option>
+    <option value = {7}>Fixed Deposit(FD) - 7%</option>
+    <option value = {13.5}>Large Cap MF - 13.5%</option>
+    <option value = {20}>Small Cap MF - 20%</option>
+  </select>
     </div>
 
     <div className="mb-2">
